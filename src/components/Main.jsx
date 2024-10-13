@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PokeCard from "./PokeCard";
 
 function Main() {
   const [pokemon, setPokemon] = useState([]);
@@ -19,10 +20,25 @@ function Main() {
       });
   };
 
+  //   async function grabData() {
+  //     const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
+  //     const data = await response.json();
+  //     setPokemon(data.results);
+  //   }
+
   async function grabData() {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=9");
     const data = await response.json();
-    setPokemon(data.results);
+
+    const detailedPokemonData = await Promise.all(
+      data.results.map(async (poke) => {
+        const res = await fetch(poke.url);
+        const details = await res.json();
+        return { name: poke.name, ...details };
+      })
+    );
+
+    setPokemon(detailedPokemonData);
   }
 
   useEffect(() => {
@@ -33,9 +49,19 @@ function Main() {
 
   return (
     <>
-      {pokemon.map((poke) => {
-        return <h1>{poke.name}</h1>;
-      })}
+      <div className="flex flex-wrap gap-3 justify-center">
+        {pokemon.map((poke) => {
+          return (
+            <PokeCard
+              key={poke.name}
+              name={poke.name}
+              id={poke.id}
+              image={poke.sprites.front_default}
+              types={poke.types}
+            />
+          );
+        })}
+      </div>
     </>
   );
 }
