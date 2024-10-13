@@ -2,7 +2,7 @@ import React from "react";
 
 function Navbar() {
   return (
-    <div className="navbar bg-base-100 mt-1">
+    <div className="navbar bg-base-100 border-b-2 mt-1">
       <div className="flex-1">
         <a className="btn btn-ghost text-2xl">Kanto Region Pokedex</a>
       </div>
