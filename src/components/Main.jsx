@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PokeCard from "./PokeCard";
 
-function Main() {
+function Main({ searchTerm }) {
   const [pokemon, setPokemon] = useState([]);
   const [displayedPokemon, setDisplayedPokemon] = useState([]);
   const [itemsToShow, setItemsToShow] = useState(20);
@@ -30,6 +30,19 @@ function Main() {
     fetchPokemon();
   }, [itemsToShow]);
 
+  useEffect(() => {
+    if (searchTerm) {
+      const filteredPokemon = pokemon.filter(
+        (poke) =>
+          poke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          poke.id === parseInt(searchTerm)
+      );
+      setDisplayedPokemon(filteredPokemon.slice(0, itemsToShow));
+    } else {
+      setDisplayedPokemon(pokemon.slice(0, itemsToShow));
+    }
+  }, [searchTerm, pokemon, itemsToShow]);
+
   return (
     <>
       <div className="flex flex-wrap gap-3 justify-center">
@@ -45,7 +58,7 @@ function Main() {
           );
         })}
       </div>
-      {itemsToShow < pokemon.length && (
+      {itemsToShow < pokemon.length && !searchTerm && (
         <div className="flex justify-center my-4">
           <button
             onClick={loadMorePokemon}
