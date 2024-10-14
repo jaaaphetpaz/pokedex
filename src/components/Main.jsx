@@ -5,19 +5,10 @@ import PokeCard from "./PokeCard";
 function Main() {
   const [pokemon, setPokemon] = useState([]);
   const [displayedPokemon, setDisplayedPokemon] = useState([]);
+  const [itemsToShow, setItemsToShow] = useState(20);
 
-  const fetchPokemon = async () => {
-    const response = await axios.get(
-      "https://pokeapi.co/api/v2/pokemon?limit=153"
-    );
-    const pokemonList = response.data.results;
-
-    const detailedPokemon = await Promise.all(
-      pokemonList.map(async (pokemon) => {
-        const res = await axios.get(pokemon.url);
-        return res.data;
-      })
-    );
+  const loadMorePokemon = () => {
+    setItemsToShow((prevItemsToShow) => prevItemsToShow + 20);
   };
 
   useEffect(() => {
@@ -34,10 +25,10 @@ function Main() {
         })
       );
       setPokemon(detailedPokemon);
-      setDisplayedPokemon(detailedPokemon.slice(0, 20));
+      setDisplayedPokemon(detailedPokemon.slice(0, itemsToShow));
     };
     fetchPokemon();
-  }, []);
+  }, [itemsToShow]);
 
   return (
     <>
@@ -54,6 +45,16 @@ function Main() {
           );
         })}
       </div>
+      {itemsToShow < pokemon.length && (
+        <div className="flex justify-center my-4">
+          <button
+            onClick={loadMorePokemon}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md"
+          >
+            Load More
+          </button>
+        </div>
+      )}
     </>
   );
 }
