@@ -1,56 +1,48 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import PokeCard from "./PokeCard";
 
 function Main() {
   const [pokemon, setPokemon] = useState([]);
+  const [displayedPokemon, setDisplayedPokemon] = useState([]);
 
-  const fetchData = () => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=9")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.error("Problem occured", err);
-      });
-  };
+  const fetchPokemon = async () => {
+    const response = await axios.get(
+      "https://pokeapi.co/api/v2/pokemon?limit=153"
+    );
+    const pokemonList = response.data.results;
 
-  //   async function grabData() {
-  //     const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
-  //     const data = await response.json();
-  //     setPokemon(data.results);
-  //   }
-
-  async function grabData() {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=9");
-    const data = await response.json();
-
-    const detailedPokemonData = await Promise.all(
-      data.results.map(async (poke) => {
-        const res = await fetch(poke.url);
-        const details = await res.json();
-        return { name: poke.name, ...details };
+    const detailedPokemon = await Promise.all(
+      pokemonList.map(async (pokemon) => {
+        const res = await axios.get(pokemon.url);
+        return res.data;
       })
     );
-
-    setPokemon(detailedPokemonData);
-  }
+  };
 
   useEffect(() => {
-    grabData();
-  }, []);
+    const fetchPokemon = async () => {
+      const response = await axios.get(
+        "https://pokeapi.co/api/v2/pokemon?limit=151"
+      );
+      const pokemonList = response.data.results;
 
-  console.log(pokemon);
+      const detailedPokemon = await Promise.all(
+        pokemonList.map(async (pokemon) => {
+          const res = await axios.get(pokemon.url);
+          return res.data;
+        })
+      );
+      setPokemon(detailedPokemon);
+      setDisplayedPokemon(detailedPokemon.slice(0, 20));
+    };
+    fetchPokemon();
+  }, []);
 
   return (
     <>
       <div className="flex flex-wrap gap-3 justify-center">
-        {pokemon.map((poke) => {
+        {displayedPokemon.map((poke) => {
           return (
             <PokeCard
               key={poke.name}
