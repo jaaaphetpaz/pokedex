@@ -7,12 +7,11 @@ function PokeCard(props) {
   const formattedId = `#${id.toString().padStart(3, "0")}`;
 
   return (
-    <div className="card bg-base-100 w-96 shadow-xl">
+    <div className="card bg-base-100 w-80 shadow-xl cursor-pointer hover:scale-[105%]">
       <figure className="px-2 pt-2">
-        <img src={image} alt="Shoes" className="rounded-xl" />
+        <img src={image} alt={capitalizedName} className="rounded-xl" />
       </figure>
       <div className="card-body items-center text-center">
-        {/* <h1>{formattedId}</h1> */}
         <h2 className="text-center text-lg font-bold">
           {formattedId} {capitalizedName}
         </h2>
@@ -30,9 +29,6 @@ function PokeCard(props) {
             );
           })}
         </div>
-        {/* <div className="card-actions">
-          <button className="btn btn-primary">Catch</button>
-        </div> */}
       </div>
     </div>
   );

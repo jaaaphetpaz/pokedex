@@ -6,9 +6,21 @@ function Main({ searchTerm }) {
   const [pokemon, setPokemon] = useState([]);
   const [displayedPokemon, setDisplayedPokemon] = useState([]);
   const [itemsToShow, setItemsToShow] = useState(20);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadMorePokemon = () => {
     setItemsToShow((prevItemsToShow) => prevItemsToShow + 20);
+  };
+
+  const handleCardClick = (poke) => {
+    setSelectedPokemon(poke);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPokemon(null);
   };
 
   useEffect(() => {
@@ -45,16 +57,18 @@ function Main({ searchTerm }) {
 
   return (
     <>
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="flex flex-wrap gap-3 justify-center pt-5">
         {displayedPokemon.map((poke) => {
           return (
-            <PokeCard
-              key={poke.name}
-              name={poke.name}
-              id={poke.id}
-              image={poke.sprites.front_default}
-              types={poke.types}
-            />
+            <div key={poke.id} onClick={() => handleCardClick(poke)}>
+              <PokeCard
+                key={poke.name}
+                name={poke.name}
+                id={poke.id}
+                image={poke.sprites.front_default}
+                types={poke.types}
+              />
+            </div>
           );
         })}
       </div>
@@ -66,6 +80,39 @@ function Main({ searchTerm }) {
           >
             Load More
           </button>
+        </div>
+      )}
+      {isModalOpen && selectedPokemon && (
+        <div className="modal modal-open">
+          <div className="modal-box flex-col justify-items-center">
+            <h2 className="text-2xl font-bold">
+              {`#${String(selectedPokemon.id).padStart(3, "0")} ${
+                selectedPokemon.name.charAt(0).toUpperCase() +
+                selectedPokemon.name.slice(1)
+              }`}
+            </h2>
+            <img
+              src={selectedPokemon.sprites.front_default}
+              alt={selectedPokemon.name}
+            />
+            <div className="py-4">
+              <p>
+                <strong>Type:</strong>{" "}
+                {selectedPokemon.types.map((type) => type.type.name).join(", ")}
+              </p>
+              <p>
+                <strong>Height:</strong> {selectedPokemon.height}
+              </p>
+              <p>
+                <strong>Weight:</strong> {selectedPokemon.weight}
+              </p>
+            </div>
+            <div className="modal-action">
+              <button onClick={closeModal} className="btn">
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
