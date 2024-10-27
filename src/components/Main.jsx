@@ -101,10 +101,11 @@ function Main({ searchTerm }) {
                 {selectedPokemon.types.map((type) => type.type.name).join(", ")}
               </p>
               <p>
-                <strong>Height:</strong> {selectedPokemon.height}
+                <strong>Height:</strong>{" "}
+                {(selectedPokemon.height * 0.1).toFixed(2)} m
               </p>
               <p>
-                <strong>Weight:</strong> {selectedPokemon.weight}
+                <strong>Weight:</strong> {selectedPokemon.weight * 0.1} kg
               </p>
             </div>
             <div className="modal-action">
